@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Calendario Home Office IPG 2025–2027 · Festivos y semanas Presencial/Virtual</title>
+<title>Calendario Colombia 2025–2027 · Festivos y semanas Presencial/Virtual</title>
 <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/9/99/Flag_of_Colombia.svg">
 <meta name="description" content="Calendario de Colombia 2025, 2026 y 2027 con festivos oficiales y modalidad semanal (lunes a domingo).">
 <meta property="og:title" content="Calendario Colombia 2025–2027 · Festivos y semanas Presencial/Virtual">
@@ -84,8 +84,8 @@
     <div class="headerbar">
       <div class="header-row">
         <div>
-          <div class="title">Calendario de Home Office IPG 2025–2027</div>
-          <div class="subtitle">Calendario con semanas virtuales/presenciales y festivos. Si ves cambios posibles, comunícate con Nicolás.</div>
+          <div class="title">Calendario de Colombia 2025–2027</div>
+          <div class="subtitle">Festivos oficiales y modalidad semanal de trabajo (lunes a domingo).</div>
         </div>
         <div class="legend-global">
           <span class="legend-item"><span class="swatch pres"></span>Presencial</span>
@@ -199,5 +199,110 @@
     });
     </script>
     
+
+<!-- Injected enhancements: dropdown months & holiday accordions -->
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  // --- Inject CSS ---
+  const style = document.createElement('style');
+  style.textContent = `
+  .dropdown{ position:relative; display:inline-block; }
+  .dd-btn{ cursor:pointer; }
+  .dropdown .menu{ display:none; position:absolute; top:100%; left:0; z-index:60; background:#fff; border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow); min-width:180px; padding:6px; }
+  .dropdown.open .menu{ display:block; }
+  .dropdown .menu .menu-item{ display:block; padding:6px 10px; border-radius:8px; text-decoration:none; color:var(--ink); }
+  .dropdown .menu .menu-item:hover{ background:var(--card); }
+  .sidebar{ max-height: calc(100vh - 120px); overflow-y: auto; }
+  .hol-accordion details{ border:1px solid var(--border); border-radius:12px; margin-bottom:8px; background:#fff; }
+  .hol-accordion summary{ list-style:none; cursor:pointer; padding:10px 12px; font-weight:700; color:var(--ink); }
+  .hol-accordion summary::-webkit-details-marker{ display:none; }
+  .hol-accordion details[open] summary{ border-bottom:1px dashed var(--border); }
+  .hol-accordion .holiday-list{ list-style:none; margin:0; padding:8px 12px; }
+  `;
+  document.head.appendChild(style);
+
+  // --- Helper: Month names ---
+  const monthNames = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+
+  // --- 1) Convert year tabs to dropdowns with months ---
+  const nav = document.querySelector('nav.tabs');
+  if (nav){
+    const yearTabs = Array.from(nav.querySelectorAll('a.tab[data-year]'));
+    yearTabs.forEach(tab => {
+      const year = tab.getAttribute('data-year');
+      const dd = document.createElement('div');
+      dd.className = 'dropdown';
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'tab dd-btn';
+      btn.textContent = year + ' ▾';
+      const menu = document.createElement('div');
+      menu.className = 'menu';
+      for (let m=1; m<=12; m++){
+        const a = document.createElement('a');
+        a.className = 'menu-item';
+        const mm = String(m).padStart(2,'0');
+        a.href = `#${year}-${mm}`;
+        a.textContent = monthNames[m-1];
+        a.addEventListener('click', ()=>{ dd.classList.remove('open'); });
+        menu.appendChild(a);
+      }
+      dd.appendChild(btn);
+      dd.appendChild(menu);
+      tab.replaceWith(dd);
+
+      btn.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        document.querySelectorAll('.dropdown').forEach(x=>{ if(x!==dd) x.classList.remove('open'); });
+        dd.classList.toggle('open');
+      });
+    });
+    document.addEventListener('click', ()=>{
+      document.querySelectorAll('.dropdown').forEach(x=> x.classList.remove('open'));
+    });
+  }
+
+  // --- 2) Sidebar: group holidays by month into accordions & make independent scroll ---
+  document.querySelectorAll('.sidebar').forEach(sidebar => {
+    const list = sidebar.querySelector('ul.holiday-list');
+    if (!list) return;
+    const items = Array.from(list.querySelectorAll('li'));
+    if (!items.length) return;
+
+    // Group items by MM
+    const groups = {};
+    items.forEach(li => {
+      const a = li.querySelector('a.hl-date');
+      if (!a) return;
+      const text = a.textContent.trim(); // YYYY-MM-DD
+      const mm = text.split('-')[1];
+      if (!groups[mm]) groups[mm] = [];
+      groups[mm].push(li);
+    });
+
+    // Build accordion
+    const acc = document.createElement('div');
+    acc.className = 'hol-accordion';
+    for (let m=1; m<=12; m++){
+      const mm = String(m).padStart(2,'0');
+      const monthItems = groups[mm] || [];
+      if (!monthItems.length) continue;
+      const details = document.createElement('details');
+      const summary = document.createElement('summary');
+      summary.textContent = `${monthNames[m-1]} (${monthItems.length})`;
+      details.appendChild(summary);
+      const ul = document.createElement('ul');
+      ul.className = 'holiday-list';
+      monthItems.forEach(li => ul.appendChild(li));
+      details.appendChild(ul);
+      acc.appendChild(details);
+    }
+
+    // Replace list with accordion
+    list.replaceWith(acc);
+  });
+});
+</script>
+
 </body>
 </html>
