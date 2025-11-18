@@ -84,8 +84,8 @@
     <div class="headerbar">
       <div class="header-row">
         <div>
-          <div class="title">Calendario de Home Office IPG 2025–2027</div>
-          <div class="subtitle">Festivos oficiales y modalidad semanal de trabajo. Si ves algún cambio, escríbele a Nicolás.</div>
+          <div class="title">Calendario de Colombia 2025–2027</div>
+          <div class="subtitle">Festivos oficiales y modalidad semanal de trabajo (lunes a domingo).</div>
         </div>
         <div class="legend-global">
           <span class="legend-item"><span class="swatch pres"></span>Presencial</span>
@@ -304,5 +304,278 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 </script>
 
+<!-- === INTEGRACIÓN: Calculadora de Vacaciones (namespaced: vc- / VC_) === -->
+<section id="vc-root" style="margin:24px 0">
+  <details open>
+    <summary style="font-weight:800;font-size:18px;cursor:pointer">🗓️ Calculadora de Vacaciones · Colombia 2025–2027</summary>
+    <div class="vc-container">
+      <style>
+        #vc-root{--bg:#f7f7fb; --ink:#0f172a; --muted:#6b7280; --primary:#111827;
+                 --border:#e5e7eb; --ok:#10b981; --warn:#ef4444; --info:#6366f1;
+                 --card:#ffffff; --pres-bg: rgba(16,185,129,.16);
+                 --virt-bg: rgba(99,102,241,.16); --hol-bg: rgba(239,68,68,.18);}
+        #vc-root .vc-container{max-width:1100px;padding:16px 0}
+        #vc-root .vc-grid{display:grid;grid-template-columns:2fr 1fr;gap:16px;align-items:start}
+        @media (max-width:980px){#vc-root .vc-grid{grid-template-columns:1fr}}
+        #vc-root .vc-card{background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+        #vc-root .vc-card .vc-hd{padding:12px 14px;border-bottom:1px solid var(--border);font-weight:800}
+        #vc-root .vc-card .vc-bd{padding:14px}
+        #vc-root .vc-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+        @media (max-width:640px){#vc-root .vc-row{grid-template-columns:1fr}}
+        #vc-root label{font-weight:700;font-size:13px}
+        #vc-root input[type=date]{width:100%;padding:10px;border:1px solid var(--border);border-radius:10px}
+        #vc-root button{appearance:none;border:0;background:var(--primary);color:#fff;padding:10px 14px;border-radius:12px;cursor:pointer;font-weight:800}
+        #vc-root button.vc-secondary{background:#fff;color:var(--ink);border:1px solid var(--border)}
+        #vc-root .vc-pill{display:inline-flex;gap:8px;align-items:center;padding:6px 8px;border-radius:999px;border:1px solid var(--border);background:#fff}
+        #vc-root .vc-sw{width:12px;height:12px;border-radius:3px;display:inline-block;border:1px solid var(--border)}
+        #vc-root .vc-pres{background:var(--pres-bg)} #vc-root .vc-vir{background:var(--virt-bg)} #vc-root .vc-hol{background:var(--hol-bg)}
+        #vc-root .vc-stat{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;padding:8px 0;border-bottom:1px dashed var(--border)}
+        #vc-root .vc-stat:last-child{border-bottom:0}
+        #vc-root .vc-k{font-weight:800} #vc-root .vc-v{font-variant-numeric:tabular-nums}
+        #vc-root .vc-list{list-style:none;margin:0;padding:0}
+        #vc-root .vc-list li{padding:6px 0;border-bottom:1px dashed var(--border)}
+        #vc-root .vc-list li:last-child{border-bottom:0}
+        #vc-root .vc-muted{color:var(--muted)} #vc-root .vc-ok{color:var(--ok);font-weight:800} #vc-root .vc-warn{color:var(--warn);font-weight:800}
+        #vc-root .vc-badge{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid var(--border);background:#fff;font-weight:700}
+        #vc-root pre.vc-tests{background:#0b1020;color:#e5e7eb;padding:12px;border-radius:12px;overflow:auto;border:1px solid var(--border)}
+      </style>
+
+      <div class="vc-grid">
+        <section class="vc-card" aria-labelledby="vc-calc-h1">
+          <div class="vc-hd" id="vc-calc-h1">Tu rango de descanso</div>
+          <div class="vc-bd">
+            <div class="vc-row" style="margin-bottom:12px">
+              <div>
+                <label for="vc-start">Inicio (inclusive)</label>
+                <input type="date" id="vc-start" value="2026-02-03" min="2025-01-01" max="2027-12-31" />
+              </div>
+              <div>
+                <label for="vc-end">Fin (inclusive)</label>
+                <input type="date" id="vc-end" value="2026-02-15" min="2025-01-01" max="2027-12-31" />
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+              <button id="vc-btn-calc">Calcular</button>
+              <button id="vc-btn-clear" class="vc-secondary">Limpiar</button>
+            </div>
+            <div class="vc-muted">Tip: los <b>festivos</b> cuentan como días de descanso pero <u>no</u> descuentan vacaciones si caen entre semana. Los <b>fines de semana</b> tampoco descuentan vacaciones.</div>
+          </div>
+        </section>
+
+        <aside class="vc-card" aria-labelledby="vc-res-h1">
+          <div class="vc-hd" id="vc-res-h1">Resumen</div>
+          <div class="vc-bd" id="vc-summary">
+            <div class="vc-muted">Ingresa un rango y presiona <b>Calcular</b>.</div>
+          </div>
+        </aside>
+
+        <section class="vc-card" aria-labelledby="vc-det-h1" style="grid-column:1/-1">
+          <div class="vc-hd" id="vc-det-h1">Detalle del cálculo</div>
+          <div class="vc-bd">
+            <div id="vc-detail"></div>
+          </div>
+        </section>
+      </div>
+
+      <section class="vc-card" aria-labelledby="vc-best-h1" style="margin-top:16px">
+        <div class="vc-hd" id="vc-best-h1">Mejores plazos para pedir 5, 10 o 15 días de vacaciones</div>
+        <div class="vc-bd">
+          <p class="vc-muted" style="margin-top:0">Optimizados para <b>aprovechar festivos y fines de semana</b> dentro del rango, de modo que descanses más días consumiendo el mismo número de días de vacaciones.</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 16px">
+            <button id="vc-btn-suggest">Calcular mejores plazos</button>
+            <span class="vc-pill"><span class="vc-sw vc-hol"></span> Más festivos en el rango = mejor</span>
+          </div>
+          <div id="vc-best-windows" class="vc-muted">Presiona <b>Calcular mejores plazos</b> para ver los resultados por año y duración.</div>
+        </div>
+      </section>
+
+      <section class="vc-card" aria-labelledby="vc-tests-h1" style="margin-top:16px">
+        <div class="vc-hd" id="vc-tests-h1">Pruebas automáticas</div>
+        <div class="vc-bd">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+            <button id="vc-btn-run-tests">Ejecutar tests</button>
+            <span class="vc-pill">Valida días hábiles, fines de semana y festivos.</span>
+          </div>
+          <pre class="vc-tests" id="vc-tests-log">Aún no se han ejecutado tests.</pre>
+        </div>
+      </section>
+    </div>
+  </details>
+</section>
+
+<script>
+// ===== Namespace VC_ to avoid global collisions =====
+
+// Datos embebidos
+const VC_HOLIDAYS = [
+  {"date":"2025-01-01","name":"Año Nuevo"},{"date":"2025-01-06","name":"Festivo por el día de los Reyes Magos"},{"date":"2025-03-24","name":"Festivo por el día de San José"},{"date":"2025-04-13","name":"Domingo de Ramos"},{"date":"2025-04-17","name":"Jueves Santo"},{"date":"2025-04-18","name":"Viernes Santo"},{"date":"2025-04-20","name":"Domingo de Resurrección"},{"date":"2025-05-01","name":"Día del Trabajo"},{"date":"2025-06-02","name":"Festivo por la Ascensión del Señor"},{"date":"2025-06-23","name":"Festivo por Corpus Christi"},{"date":"2025-06-30","name":"Festivo por el Sagrado Corazón de Jesús"},{"date":"2025-07-20","name":"Día de la Independencia"},{"date":"2025-08-07","name":"Batalla de Boyacá"},{"date":"2025-08-18","name":"Festivo por la Asunción de la Virgen"},{"date":"2025-10-13","name":"Festivo por el Día de la Raza"},{"date":"2025-11-03","name":"Festivo por Todos los Santos"},{"date":"2025-11-17","name":"Festivo por la Independencia de Cartagena"},{"date":"2025-12-08","name":"Inmaculada Concepción"},{"date":"2025-12-25","name":"Navidad"},{"date":"2025-04-21","name":"Lunes de Pascua (regiones)"},
+  {"date":"2026-01-01","name":"Año Nuevo"},{"date":"2026-01-12","name":"Festivo por el día de los Reyes Magos"},{"date":"2026-03-23","name":"Festivo por el día de San José"},{"date":"2026-03-29","name":"Domingo de Ramos"},{"date":"2026-04-02","name":"Jueves Santo"},{"date":"2026-04-03","name":"Viernes Santo"},{"date":"2026-04-05","name":"Domingo de Resurrección"},{"date":"2026-05-01","name":"Día del Trabajo"},{"date":"2026-05-18","name":"Festivo por la Ascensión del Señor"},{"date":"2026-06-08","name":"Festivo por Corpus Christi"},{"date":"2026-06-15","name":"Festivo por el Sagrado Corazón de Jesús"},{"date":"2026-07-20","name":"Día de la Independencia"},{"date":"2026-08-07","name":"Batalla de Boyacá"},{"date":"2026-08-17","name":"Festivo por la Asunción de la Virgen"},{"date":"2026-10-12","name":"Festivo por el Día de la Raza"},{"date":"2026-11-02","name":"Festivo por Todos los Santos"},{"date":"2026-11-16","name":"Festivo por la Independencia de Cartagena"},{"date":"2026-12-08","name":"Inmaculada Concepción"},{"date":"2026-12-25","name":"Navidad"},{"date":"2026-04-06","name":"Lunes de Pascua (regiones)"},
+  {"date":"2027-01-01","name":"Año Nuevo"},{"date":"2027-01-11","name":"Festivo por el día de los Reyes Magos"},{"date":"2027-03-22","name":"Festivo por el día de San José"},{"date":"2027-03-28","name":"Domingo de Ramos"},{"date":"2027-04-01","name":"Jueves Santo"},{"date":"2027-04-02","name":"Viernes Santo"},{"date":"2027-04-04","name":"Domingo de Resurrección"},{"date":"2027-05-01","name":"Día del Trabajo"},{"date":"2027-05-10","name":"Festivo por la Ascensión del Señor"},{"date":"2027-05-31","name":"Festivo por Corpus Christi"},{"date":"2027-06-07","name":"Festivo por el Sagrado Corazón de Jesús"},{"date":"2027-07-20","name":"Día de la Independencia"},{"date":"2027-08-07","name":"Batalla de Boyacá"},{"date":"2027-08-16","name":"Festivo por la Asunción de la Virgen"},{"date":"2027-10-18","name":"Festivo por el Día de la Raza"},{"date":"2027-11-01","name":"Festivo por Todos los Santos"},{"date":"2027-11-15","name":"Festivo por la Independencia de Cartagena"},{"date":"2027-12-08","name":"Inmaculada Concepción"},{"date":"2027-12-25","name":"Navidad"},{"date":"2027-03-28","name":"Lunes de Pascua (regiones)"}
+];
+
+const VC_WEEKS = [
+  {"start":"2025-10-10","end":"2025-10-16","mode":"Presencial"},{"start":"2025-10-17","end":"2025-10-23","mode":"Virtual"},{"start":"2025-10-24","end":"2025-10-30","mode":"Presencial"},{"start":"2025-10-31","end":"2025-11-06","mode":"Virtual"},{"start":"2025-11-07","end":"2025-11-13","mode":"Presencial"},{"start":"2025-11-14","end":"2025-11-20","mode":"Virtual"},{"start":"2025-11-21","end":"2025-11-27","mode":"Presencial"},{"start":"2025-11-28","end":"2025-12-04","mode":"Virtual"},{"start":"2025-12-05","end":"2025-12-11","mode":"Presencial"},{"start":"2025-12-12","end":"2025-12-18","mode":"Virtual"},{"start":"2025-12-19","end":"2025-12-25","mode":"Presencial"},{"start":"2025-12-26","end":"2026-01-01","mode":"Virtual"},
+  {"start":"2026-01-02","end":"2026-01-08","mode":"Presencial"},{"start":"2026-01-09","end":"2026-01-15","mode":"Virtual"},{"start":"2026-01-16","end":"2026-01-22","mode":"Presencial"},{"start":"2026-01-23","end":"2026-01-29","mode":"Virtual"},{"start":"2026-01-30","end":"2026-02-05","mode":"Presencial"},{"start":"2026-02-06","end":"2026-02-12","mode":"Virtual"},{"start":"2026-02-13","end":"2026-02-19","mode":"Presencial"},{"start":"2026-02-20","end":"2026-02-26","mode":"Virtual"},{"start":"2026-02-27","end":"2026-03-05","mode":"Presencial"},{"start":"2026-03-06","end":"2026-03-12","mode":"Virtual"},{"start":"2026-03-13","end":"2026-03-19","mode":"Presencial"},{"start":"2026-03-20","end":"2026-03-26","mode":"Virtual"},{"start":"2026-03-27","end":"2026-04-02","mode":"Presencial"},{"start":"2026-04-03","end":"2026-04-09","mode":"Virtual"},{"start":"2026-04-10","end":"2026-04-16","mode":"Presencial"},{"start":"2026-04-17","end":"2026-04-23","mode":"Virtual"},{"start":"2026-04-24","end":"2026-04-30","mode":"Presencial"},{"start":"2026-05-01","end":"2026-05-07","mode":"Virtual"},{"start":"2026-05-08","end":"2026-05-14","mode":"Presencial"},{"start":"2026-05-15","end":"2026-05-21","mode":"Virtual"},{"start":"2026-05-22","end":"2026-05-28","mode":"Presencial"},{"start":"2026-05-29","end":"2026-06-04","mode":"Virtual"},{"start":"2026-06-05","end":"2026-06-11","mode":"Presencial"},{"start":"2026-06-12","end":"2026-06-18","mode":"Virtual"},{"start":"2026-06-19","end":"2026-06-25","mode":"Presencial"},{"start":"2026-06-26","end":"2026-07-02","mode":"Virtual"},{"start":"2026-07-03","end":"2026-07-09","mode":"Presencial"},{"start":"2026-07-10","end":"2026-07-16","mode":"Virtual"},{"start":"2026-07-17","end":"2026-07-23","mode":"Presencial"},{"start":"2026-07-24","end":"2026-07-30","mode":"Virtual"},{"start":"2026-07-31","end":"2026-08-06","mode":"Presencial"},{"start":"2026-08-07","end":"2026-08-13","mode":"Virtual"},{"start":"2026-08-14","end":"2026-08-20","mode":"Presencial"},{"start":"2026-08-21","end":"2026-08-27","mode":"Virtual"},{"start":"2026-08-28","end":"2026-09-03","mode":"Presencial"},{"start":"2026-09-04","end":"2026-09-10","mode":"Virtual"},{"start":"2026-09-11","end":"2026-09-17","mode":"Presencial"},{"start":"2026-09-18","end":"2026-09-24","mode":"Virtual"},{"start":"2026-09-25","end":"2026-10-01","mode":"Presencial"},{"start":"2026-10-02","end":"2026-10-08","mode":"Virtual"},{"start":"2026-10-09","end":"2026-10-15","mode":"Presencial"},{"start":"2026-10-16","end":"2026-10-22","mode":"Virtual"},{"start":"2026-10-23","end":"2026-10-29","mode":"Presencial"},{"start":"2026-10-30","end":"2026-11-05","mode":"Virtual"},{"start":"2026-11-06","end":"2026-11-12","mode":"Presencial"},{"start":"2026-11-13","end":"2026-11-19","mode":"Virtual"},{"start":"2026-11-20","end":"2026-11-26","mode":"Presencial"},{"start":"2026-11-27","end":"2026-12-03","mode":"Virtual"},{"start":"2026-12-04","end":"2026-12-10","mode":"Presencial"},{"start":"2026-12-11","end":"2026-12-17","mode":"Virtual"},{"start":"2026-12-18","end":"2026-12-24","mode":"Presencial"},{"start":"2026-12-25","end":"2026-12-31","mode":"Virtual"},
+  {"start":"2027-01-01","end":"2027-01-07","mode":"Presencial"},{"start":"2027-01-08","end":"2027-01-14","mode":"Virtual"},{"start":"2027-01-15","end":"2027-01-21","mode":"Presencial"},{"start":"2027-01-22","end":"2027-01-28","mode":"Virtual"},{"start":"2027-01-29","end":"2027-02-04","mode":"Presencial"},{"start":"2027-02-05","end":"2027-02-11","mode":"Virtual"},{"start":"2027-02-12","end":"2027-02-18","mode":"Presencial"},{"start":"2027-02-19","end":"2027-02-25","mode":"Virtual"},{"start":"2027-02-26","end":"2027-03-04","mode":"Presencial"},{"start":"2027-03-05","end":"2027-03-11","mode":"Virtual"},{"start":"2027-03-12","end":"2027-03-18","mode":"Presencial"},{"start":"2027-03-19","end":"2027-03-25","mode":"Virtual"},{"start":"2027-03-26","end":"2027-04-01","mode":"Presencial"},{"start":"2027-04-02","end":"2027-04-08","mode":"Virtual"},{"start":"2027-04-09","end":"2027-04-15","mode":"Presencial"},{"start":"2027-04-16","end":"2027-04-22","mode":"Virtual"},{"start":"2027-04-23","end":"2027-04-29","mode":"Presencial"},{"start":"2027-04-30","end":"2027-05-06","mode":"Virtual"},{"start":"2027-05-07","end":"2027-05-13","mode":"Presencial"},{"start":"2027-05-14","end":"2027-05-20","mode":"Virtual"},{"start":"2027-05-21","end":"2027-05-27","mode":"Presencial"},{"start":"2027-05-28","end":"2027-06-03","mode":"Virtual"},{"start":"2027-06-04","end":"2027-06-10","mode":"Presencial"},{"start":"2027-06-11","end":"2027-06-17","mode":"Virtual"},{"start":"2027-06-18","end":"2027-06-24","mode":"Presencial"},{"start":"2027-06-25","end":"2027-07-01","mode":"Virtual"},{"start":"2027-07-02","end":"2027-07-08","mode":"Presencial"},{"start":"2027-07-09","end":"2027-07-15","mode":"Virtual"},{"start":"2027-07-16","end":"2027-07-22","mode":"Presencial"},{"start":"2027-07-23","end":"2027-07-29","mode":"Virtual"},{"start":"2027-07-30","end":"2027-08-05","mode":"Presencial"},{"start":"2027-08-06","end":"2027-08-12","mode":"Virtual"},{"start":"2027-08-13","end":"2027-08-19","mode":"Presencial"},{"start":"2027-08-20","end":"2027-08-26","mode":"Virtual"},{"start":"2027-08-27","end":"2027-09-02","mode":"Presencial"},{"start":"2027-09-03","end":"2027-09-09","mode":"Virtual"},{"start":"2027-09-10","end":"2027-09-16","mode":"Presencial"},{"start":"2027-09-17","end":"2027-09-23","mode":"Virtual"},{"start":"2027-09-24","end":"2027-09-30","mode":"Presencial"},{"start":"2027-10-01","end":"2027-10-07","mode":"Virtual"},{"start":"2027-10-08","end":"2027-10-14","mode":"Presencial"},{"start":"2027-10-15","end":"2027-10-21","mode":"Virtual"},{"start":"2027-10-22","end":"2027-10-28","mode":"Presencial"},{"start":"2027-10-29","end":"2027-11-04","mode":"Virtual"},{"start":"2027-11-05","end":"2027-11-11","mode":"Presencial"},{"start":"2027-11-12","end":"2027-11-18","mode":"Virtual"},{"start":"2027-11-19","end":"2027-11-25","mode":"Presencial"},{"start":"2027-11-26","end":"2027-12-02","mode":"Virtual"},{"start":"2027-12-03","end":"2027-12-09","mode":"Presencial"},{"start":"2027-12-10","end":"2027-12-16","mode":"Virtual"},{"start":"2027-12-17","end":"2027-12-23","mode":"Presencial"},{"start":"2027-12-24","end":"2027-12-30","mode":"Virtual"}
+];
+
+// Utilidades
+const VC_DOW = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+const VC_MONTHS = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const VC_toDate = (s)=>{ const [y,m,d]=s.split('-').map(Number); return new Date(y,m-1,d); };
+const VC_fmt = (d)=> d.toISOString().slice(0,10);
+const VC_addDays = (d,n)=>{ const x=new Date(d); x.setDate(x.getDate()+n); return x; };
+const VC_pretty = (d)=> `${VC_DOW[d.getDay()]} ${d.getDate()} de ${VC_MONTHS[d.getMonth()]} de ${d.getFullYear()}`;
+const VC_diffDaysInclusive = (a,b)=> Math.floor((VC_toDate(VC_fmt(b)) - VC_toDate(VC_fmt(a)))/86400000)+1;
+const VC_HSET = new Map(VC_HOLIDAYS.map(h=>[h.date,h.name]));
+const VC_isWeekend = (d)=> d.getDay()===0 || d.getDay()===6;
+const VC_isHoliday = (d)=> VC_HSET.has(VC_fmt(d));
+const VC_isBusiness = (d)=> !VC_isWeekend(d) && !VC_isHoliday(d);
+
+function VC_enumDates(a,b){ const out=[]; let cur=VC_toDate(VC_fmt(a)), end=VC_toDate(VC_fmt(b)); while(cur<=end){ out.push(new Date(cur)); cur.setDate(cur.getDate()+1);} return out; }
+function VC_businessBetween(a,b){ return VC_enumDates(a,b).filter(VC_isBusiness).length; }
+function VC_holidaysBetween(a,b){ return VC_enumDates(a,b).filter(VC_isHoliday).length; }
+function VC_weekendsBetween(a,b){ return VC_enumDates(a,b).filter(VC_isWeekend).length; }
+function VC_findReturnDay(end){ let d=VC_addDays(end,1); while(!VC_isBusiness(d)) d=VC_addDays(d,1); return d; }
+function VC_findWeekMode(day){ const s=VC_fmt(day); for(const w of VC_WEEKS){ if(s>=w.start && s<=w.end) return w; } return null; }
+
+function VC_calculate(){
+  const startIn = document.getElementById('vc-start').value;
+  const endIn = document.getElementById('vc-end').value;
+  const summary = document.getElementById('vc-summary');
+  const detail = document.getElementById('vc-detail');
+  if(!startIn || !endIn){ summary.innerHTML='<div class="vc-muted">Ingresa un rango válido.</div>'; detail.innerHTML=''; return; }
+  const A = VC_toDate(startIn), B = VC_toDate(endIn);
+  if(B < A){ summary.innerHTML='<div class="vc-warn">La fecha fin no puede ser anterior al inicio.</div>'; detail.innerHTML=''; return; }
+
+  const days = VC_enumDates(A,B);
+  const total = VC_diffDaysInclusive(A,B);
+  const weekends = days.filter(VC_isWeekend);
+  const holidays = days.filter(VC_isHoliday);
+  const business = days.filter(VC_isBusiness);
+  const vacationDays = business.length;
+  const returnDay = VC_findReturnDay(B);
+  const weekInfo = VC_findWeekMode(returnDay);
+
+  summary.innerHTML = `
+    <div class="vc-stat"><div class="vc-k">Descansas</div><div class="vc-v"><b>${total}</b> días <span class="vc-muted">(${VC_pretty(A)} → ${VC_pretty(B)})</span></div></div>
+    <div class="vc-stat"><div class="vc-k">Vacaciones que se descuentan</div><div class="vc-v vc-ok"><b>${vacationDays}</b> días hábiles</div></div>
+    <div class="vc-stat"><div class="vc-k">Fines de semana dentro del rango</div><div class="vc-v"><b>${weekends.length}</b> días (no descuentan)</div></div>
+    <div class="vc-stat"><div class="vc-k">Festivos dentro del rango</div><div class="vc-v"><b>${holidays.length}</b> días <span class="vc-muted">(no descuentan si caen entre semana)</span></div></div>
+    <div class="vc-stat"><div class="vc-k">Regresas a trabajar</div><div class="vc-v"><b>${VC_pretty(returnDay)}</b></div></div>
+    <div class="vc-stat"><div class="vc-k">Semana de regreso</div><div class="vc-v">${weekInfo ? `${weekInfo.start} a ${weekInfo.end} · <span class="vc-badge">${weekInfo.mode==='Presencial'?'<span class="vc-sw vc-pres"></span> Presencial':'<span class="vc-sw vc-vir"></span> Virtual'}</span>` : '<span class="vc-badge">Sin datos en tabla</span>'}</div></div>
+  `;
+
+  const holList = holidays.map(d=>{ const s = VC_fmt(d); return `<li><b>${s}</b> · ${VC_HSET.get(s) || 'Festivo'} · ${VC_DOW[d.getDay()]}</li>`; }).join('') || '<li class="vc-muted">No hay festivos en el rango.</li>';
+  const wdList = business.map(d=> `<li>${VC_fmt(d)} · ${VC_DOW[d.getDay()]}</li>`).join('');
+  detail.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div>
+        <h3>Días que descuentan vacaciones</h3>
+        <p class="vc-muted">Son días hábiles (lunes a viernes) que <u>no</u> son festivo.</p>
+        <ul class="vc-list">${wdList || '<li class="vc-muted">—</li>'}</ul>
+      </div>
+      <div>
+        <h3>Festivos dentro del rango</h3>
+        <ul class="vc-list">${holList}</ul>
+      </div>
+    </div>`;
+}
+
+function VC_findTopWindowsForYear(year, targets=[5,10,15], perTarget=5){
+  const results = { [year]: {} };
+  const endOfYear = new Date(year,11,31);
+  function* YIter(){ let d=new Date(year,0,1); while(d<=endOfYear){ yield new Date(d); d.setDate(d.getDate()+1);} }
+  for(const T of targets){
+    const buckets=[];
+    for(const start of YIter()){
+      let curEnd=new Date(start); let bd=0;
+      while(curEnd<=endOfYear && bd<T){ bd = VC_businessBetween(start,curEnd); if(bd<T) curEnd.setDate(curEnd.getDate()+1); }
+      if(bd!==T) continue;
+      const hol=VC_holidaysBetween(start,curEnd);
+      const we=VC_weekendsBetween(start,curEnd);
+      const total=VC_diffDaysInclusive(start,curEnd);
+      buckets.push({start, end:new Date(curEnd), holidays:hol, weekends:we, total, bd});
+    }
+    buckets.sort((a,b)=> b.holidays - a.holidays || b.total - a.total || a.start - b.start);
+    results[year][T] = buckets.slice(0, perTarget);
+  }
+  return results;
+}
+
+function VC_renderAccordionForYear(year, data){
+  const makeItem = (it)=>{
+    const s=VC_fmt(it.start), e=VC_fmt(it.end);
+    const ret=VC_findReturnDay(it.end);
+    const week=VC_findWeekMode(ret);
+    return `<li>
+      <b>${s} → ${e}</b> · Descansas <b>${it.total}</b> días, consumes <b>${it.bd}</b> vacaciones · Festivos en el rango: <b>${it.holidays}</b>, Fines de semana: ${it.weekends}
+      <div class="vc-muted">Regresas: ${VC_pretty(ret)} ${week?`· Semana ${week.mode}`:''}</div>
+    </li>`;
+  };
+  const lengths=[5,10,15];
+  const inner = lengths.map(L=>{
+    const items = data[L]||[];
+    const list = items.length? `<ul class="vc-list">${items.map(makeItem).join('')}</ul>` : '<div class="vc-muted">No se encontraron ventanas óptimas.</div>';
+    return `<details>
+      <summary class="vc-badge">Mejores ventanas para pedir <b>${L}</b> días</summary>
+      <div style="margin:8px 0 12px">${list}</div>
+    </details>`;
+  }).join('');
+  return `<details open>
+    <summary class="vc-badge">${year}</summary>
+    <div style="margin:10px 0 16px">${inner}</div>
+  </details>`;
+}
+
+function VC_suggestBestWindows(){
+  const years=[2025,2026,2027];
+  const container=document.getElementById('vc-best-windows');
+  container.innerHTML='<div class="vc-muted">Calculando…</div>';
+  const chunks=[];
+  for(const y of years){
+    const res=VC_findTopWindowsForYear(y);
+    chunks.push(VC_renderAccordionForYear(y, res[y]));
+  }
+  container.innerHTML = chunks.join('');
+}
+
+// Tests
+function VC_logTest(msg, ok){
+  const el=document.getElementById('vc-tests-log');
+  const line = `${ok?'✅':'❌'} ${msg}`;
+  el.textContent = (el.textContent && el.textContent !== 'Aún no se han ejecutado tests.') ? `${el.textContent}\n${line}` : line;
+}
+function VC_runTests(){
+  let A=new Date(2026,1,3), B=new Date(2026,1,7);
+  VC_logTest('BD 2026-02-03→2026-02-07 debe ser 4', VC_businessBetween(A,B)===4);
+  A=new Date(2026,0,12); B=new Date(2026,0,12);
+  VC_logTest('BD 2026-01-12 (festivo) debe ser 0', VC_businessBetween(A,B)===0);
+  A=new Date(2026,1,6); B=new Date(2026,1,7);
+  VC_logTest('BD 2026-02-06→2026-02-07 (fin de semana) debe ser 0', VC_businessBetween(A,B)===0);
+  A=new Date(2026,3,2); B=new Date(2026,3,3);
+  VC_logTest('BD 2026-04-02→2026-04-03 (Jue/Vie Santos) debe ser 0', VC_businessBetween(A,B)===0);
+  const d=new Date(2026,1,3);
+  VC_logTest('fmt(2026-02-03) == "2026-02-03"', VC_fmt(d)==='2026-02-03');
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  const bc=document.getElementById('vc-btn-calc');
+  if(bc) bc.addEventListener('click', VC_calculate);
+  const bl=document.getElementById('vc-btn-clear');
+  if(bl) bl.addEventListener('click', ()=>{
+    document.getElementById('vc-start').value='';
+    document.getElementById('vc-end').value='';
+    document.getElementById('vc-summary').innerHTML='<div class="vc-muted">Ingresa un rango y presiona <b>Calcular</b>.</div>';
+    document.getElementById('vc-detail').innerHTML='';
+  });
+  const bs=document.getElementById('vc-btn-suggest');
+  if(bs) bs.addEventListener('click', VC_suggestBestWindows);
+  const bt=document.getElementById('vc-btn-run-tests');
+  if(bt) bt.addEventListener('click', ()=>{ document.getElementById('vc-tests-log').textContent=''; VC_runTests(); });
+  VC_calculate();
+});
+</script>
+<!-- === FIN INTEGRACIÓN === -->
 </body>
 </html>
